@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python Quiz App</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; padding: 30px 15px; }
+    .box { background: #1e293b; width: 100%; max-width: 500px; padding: 24px; border-radius: 12px; }
+    h1 { text-align: center; margin-bottom: 4px; }
+    .info { text-align: center; color: #94a3b8; margin-bottom: 18px; }
+    button { display: block; width: 100%; padding: 12px; margin: 8px 0; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; background: #334155; color: #fff; }
+    button:hover { background: #475569; }
+    .correct { background: #16a34a !important; }
+    .wrong { background: #dc2626 !important; }
+    #next { background: #38bdf8; color: #0f172a; font-weight: bold; display: none; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Python Quiz App</h1>
+    <div class="info">Question <span id="num">1</span> of <span id="total">5</span> | Score: <span id="score">0</span></div>
+    <h3 id="question"></h3>
+    <div id="options"></div>
+    <button id="next" onclick="nextQuestion()">Next</button>
+  </div>
+
+  <script>
+    const questions = [
+      { q: "Which function prints output in Python?", options: ["echo()", "print()", "show()", "write()"], answer: 1 },
+      { q: "Which symbol starts a comment in Python?", options: ["//", "#", "/*", "--"], answer: 1 },
+      { q: "Which of these is a list?", options: ["(1, 2, 3)", "{1, 2, 3}", "[1, 2, 3]", "<1, 2, 3>"], answer: 2 },
+      { q: "What does len('hello') return?", options: ["4", "5", "6", "Error"], answer: 1 },
+      { q: "Which keyword defines a function?", options: ["func", "function", "define", "def"], answer: 3 }
+    ];
+
+    let current = 0, score = 0, answered = false;
+
+    function showQuestion() {
+      answered = false;
+      const q = questions[current];
+      document.getElementById("num").textContent = current + 1;
+      document.getElementById("total").textContent = questions.length;
+      document.getElementById("question").textContent = q.q;
+      document.getElementById("next").style.display = "none";
+      const box = document.getElementById("options");
+      box.innerHTML = "";
+      q.options.forEach((text, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = text;
+        btn.onclick = () => checkAnswer(i, btn);
+        box.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(i, btn) {
+      if (answered) return;
+      answered = true;
+      const correct = questions[current].answer;
+      const buttons = document.querySelectorAll("#options button");
+      if (i === correct) {
+        score++;
+        btn.classList.add("correct");
+      } else {
+        btn.classList.add("wrong");
+        buttons[correct].classList.add("correct");
+      }
+      document.getElementById("score").textContent = score;
+      document.getElementById("next").style.display = "block";
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) showQuestion();
+      else showResult();
+    }
+
+    function showResult() {
+      document.querySelector(".box").innerHTML =
+        "<h1>Quiz Complete!</h1><p class='info'>You scored " + score + " out of " + questions.length +
+        "</p><button onclick='location.reload()'>Try Again</button>";
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
